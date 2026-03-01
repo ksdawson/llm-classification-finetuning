@@ -77,7 +77,7 @@ def max_min_fair_truncation(tok_p, tok_a, tok_b, max_length):
     return results['p'], results['a'], results['b']
 ```
 
-This model scores 1.08393 on the leaderboard dataset. The score is based on the log loss between the predicted probabilities and the ground truth values (lower score is better). For reference, the leaderboard ranges from ~0.8 to ~2.0, so this score puts us around the middle.
+This model scores 1.08393 on the leaderboard dataset ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=298775103)). The score is based on the log loss between the predicted probabilities and the ground truth values (lower score is better). For reference, the leaderboard ranges from ~0.8 to ~2.0, so this score puts us around the middle.
 
 ### Model #2: Truncation
 
@@ -102,18 +102,18 @@ def max_min_fair_head_tail_truncation(tok_p, tok_a, tok_b, max_length):
     return results['p'], results['a'], results['b']
 ```
 
-This model scored 1.08510, so actually slightly underperformed the head-only truncation.
+This model scored 1.08510 ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=299373041)), so actually slightly underperformed the head-only truncation.
 
 ### Model #3: Positional Bias
 
 In RLHF users are shown RespA and RespB and they have to pick which response they prefer for their prompt. One potential bias is positional bias where users tend to prefer the response in the first position. To remove this bias from our training we duplicate each sample in our train set by swapping each response, so every original sample has two samples in training: (1) prompt + respA + respB (2) prompt + respB + respA. Additionally, during inference we run the model twice, once with the original sample and again with the swapped sample, then average the two probability vectors to get our final prediction.
 
-This model scored 1.07776, so slightly improved our performance.
+This model scored 1.07776 ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=299378051)), so slightly improved our performance.
 
 ### Model #4: Larger Pretrained Model
 
-This model switched to a larger pretrained text model: [MS marco](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2). This performed worse with a score of 1.20250.
+This model switched to a larger pretrained text model: [MS marco](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2). This performed worse with a score of 1.20250 ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=299383511)).
 
 ### Model #5: Undo Bad Optimizations
 
-Switching back to head truncation on top of the positional bias Bert tiny model improved the score to X.
+Switching back to head truncation on top of the positional bias Bert tiny model improved the score to X ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300875881)).
