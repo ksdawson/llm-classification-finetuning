@@ -116,4 +116,8 @@ This model switched to a larger pretrained text model: [MS marco](https://huggin
 
 ### Model #5: Undo Bad Optimizations
 
-Switching back to head truncation on top of the positional bias Bert tiny model improved the score to X ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300875881)).
+Switching back to head truncation on top of the positional bias Bert tiny model improved the score to 1.06595 ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300875881)).
+
+### Model #6: From Truncation to Sliding Filter
+
+### Model #7: Response Summarization
