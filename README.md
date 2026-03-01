@@ -106,3 +106,14 @@ This model scored 1.08510, so actually slightly underperformed the head-only tru
 
 ### Model #3: Positional Bias
 
+In RLHF users are shown RespA and RespB and they have to pick which response they prefer for their prompt. One potential bias is positional bias where users tend to prefer the response in the first position. To remove this bias from our training we duplicate each sample in our train set by swapping each response, so every original sample has two samples in training: (1) prompt + respA + respB (2) prompt + respB + respA. Additionally, during inference we run the model twice, once with the original sample and again with the swapped sample, then average the two probability vectors to get our final prediction.
+
+This model scored 1.07776, so slightly improved our performance.
+
+### Model #4: Larger Pretrained Model
+
+This model switched to a larger pretrained text model: [MS marco](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2). This performed worse with a score of 1.20250.
+
+### Model #5: Undo Bad Optimizations
+
+Switching back to head truncation on top of the positional bias Bert tiny model improved the score to X.
