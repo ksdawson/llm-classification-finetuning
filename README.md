@@ -79,6 +79,30 @@ def max_min_fair_truncation(tok_p, tok_a, tok_b, max_length):
 
 This model scores 1.08393 on the leaderboard dataset. The score is based on the log loss between the predicted probabilities and the ground truth values (lower score is better). For reference, the leaderboard ranges from ~0.8 to ~2.0, so this score puts us around the middle.
 
-### Model #2: Better Truncation
+### Model #2: Truncation
+
+Input truncation is a huge challenge for this problem as a lot of important context is lost. Right now the solution to this is max-min fair truncation with capacity allocated to the head of each component. An idea to improve this is to split the allocated capacity between head and tail, so that different context for each response is included. The algorithm is shown below:
+
+```python
+def max_min_fair_head_tail_truncation(tok_p, tok_a, tok_b, max_length):
+    """
+    Uses max-min fairness but splits between head and tail of response rather than just the head.
+    """
+    toks = [('p', tok_p), ('a', tok_a), ('b', tok_b)]
+    toks.sort(key=lambda x: len(x[1]))
+    capacity = max_length - 4
+    remaining_items = len(toks)
+    results = {}
+    for tid, tok in toks:
+        fair_share = capacity // remaining_items
+        alloc = min(len(tok), fair_share)
+        results[tid] = tok[:alloc//2] + tok[-alloc//2:] # Only difference is this
+        capacity -= len(results[tid])
+        remaining_items -= 1
+    return results['p'], results['a'], results['b']
+```
+
+This model scored 1.08510, so actually slightly underperformed the head-only truncation.
 
 ### Model #3: Positional Bias
+
