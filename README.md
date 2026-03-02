@@ -118,6 +118,18 @@ This model switched to a larger pretrained text model: [MS marco](https://huggin
 
 Switching back to head truncation on top of the positional bias Bert tiny model improved the score to 1.06595 ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300875881)).
 
-### Model #6: From Truncation to Sliding Filter
+### Model #6: Sliding Context Window
 
-### Model #7: Response Summarization
+The goal is to include the full text in the context window instead of truncating it. One idea is to chunk the prompt, respA, and respB, then run the model over the cartesian product of chunks (i.e. m(p_i, A_j, B_k)), then average the outputs to get the final output. The problem is the cartesian product can be very large. An approximation of this is to use a sliding context window. We calculate the max-min fair allocation to each component and use this as the chunk size, then slide the context window over the chunks at a rate such that each window finishes at the same time. The intuition behind this is that we align the "beginning", "middle", and "end" of each component in our comparison with the assumption being that the position of the prompt is relevant to the position for each response. This reduces the number of model runs from O(N^3) in the cartesian product chunking to O(N) in the sliding context window.
+
+The score for this model is X ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300910397)).
+
+### Model #7: Sliding Context Window w/ Global Attention
+
+The sliding context window allows us to use the full context in our model, but it only allows for local reasoning as it only compares local chunks. To improve our model we need to add a sense of "global attention" to allow for cross-chunk reasoning. Right now our model combines the outputs from each chunk comparison for a sample using mean pooling, which weights all outputs equally. We can use a hierarchical architecture adding a network after the sliding window model to learn how to combine the chunk outputs. This helps our model learn the relationships between chunks where the chunk output can be thought of as the "summary" for that chunk.
+
+### Further Ideas
+
+1. Chunk prompt, respA, and respB, then run the model over the cartesian product of chunks (i.e. m(p_i, A_j, B_k)), then average the outputs to get the final output. Problem: cartesian product can be large.
+2. Summarize prompt, respA, and respB first (maybe with a sliding context window), then feed them into the model as one context window. Problem: may be hard to summarize really long responses.
+3. Use a model to extract the relevant context from each component that fits into the max-min fair capacity of the context window. Problem: better than head-only truncation but still truncation.
