@@ -128,6 +128,10 @@ The score for this model is X ([source](https://www.kaggle.com/code/kamerondawso
 
 The sliding context window allows us to use the full context in our model, but it only allows for local reasoning as it only compares local chunks. To improve our model we need to add a sense of "global attention" to allow for cross-chunk reasoning. Right now our model combines the outputs from each chunk comparison for a sample using mean pooling, which weights all outputs equally. We can use a hierarchical architecture adding a network after the sliding window model to learn how to combine the chunk outputs. This helps our model learn the relationships between chunks where the chunk output can be thought of as the "summary" for that chunk.
 
+### Model #8: Learned Sliding Context Window
+
+We have learned how to combine chunk outputs, but we also need to learn how to pair chunks in our sliding context window. Right now we assume a linear progression through the prompt, respA, and respB, but this may not be true. For example, if the promp asks for thing1 and thing2, but respA answers it with thing1 -> thing2 whereas respB does thing2 -> thing1, then it's not correct to pair the chunks in order. At this point our model has a learned local attention mechanism (learning which chunks to compare) with a global attention mechanism (learning to reason across chunk outputs).
+
 ### Further Ideas
 
 1. Chunk prompt, respA, and respB, then run the model over the cartesian product of chunks (i.e. m(p_i, A_j, B_k)), then average the outputs to get the final output. Problem: cartesian product can be large.
