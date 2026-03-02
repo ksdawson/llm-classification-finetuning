@@ -122,7 +122,7 @@ Switching back to head truncation on top of the positional bias Bert tiny model 
 
 The goal is to include the full text in the context window instead of truncating it. One idea is to chunk the prompt, respA, and respB, then run the model over the cartesian product of chunks (i.e. m(p_i, A_j, B_k)), then average the outputs to get the final output. The problem is the cartesian product can be very large. An approximation of this is to use a sliding context window. We calculate the max-min fair allocation to each component and use this as the chunk size, then slide the context window over the chunks at a rate such that each window finishes at the same time. The intuition behind this is that we align the "beginning", "middle", and "end" of each component in our comparison with the assumption being that the position of the prompt is relevant to the position for each response. This reduces the number of model runs from O(N^3) in the cartesian product chunking to O(N) in the sliding context window.
 
-The score for this model is X ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300910397)).
+The score for this model is 1.06229 ([source](https://www.kaggle.com/code/kamerondawson/llm-classification-finetuning?scriptVersionId=300910397)).
 
 ### Model #7: Sliding Context Window w/ Global Attention
 
